@@ -15,14 +15,14 @@ class FastFineTuna:
         self.tokenizer_name = tokenizer_name
 
 
-    def cross_validate_fit(self, texts, labels, epochs=5, batch_size=16):
+    def cross_validate_fit(self, texts, labels, splits = 5, epochs=5, batch_size=16):
         config = AutoConfig.from_pretrained(self.model_name, num_labels=len(set(labels)),
                                             finetuning_task="custom")
         tokenizer = AutoTokenizer.from_pretrained(self.tokenizer_name)
         texts = np.array(texts)
         labels = np.array(labels)
 
-        skf = StratifiedKFold(n_splits=2)
+        skf = StratifiedKFold(n_splits=splits)
 
         original = []
         predicted = []

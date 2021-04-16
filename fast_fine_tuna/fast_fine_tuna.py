@@ -15,7 +15,7 @@ class FastFineTuna:
         self.tokenizer_name = tokenizer_name
 
 
-    def cross_validate_fit(self, texts, labels, epochs=5):
+    def cross_validate_fit(self, texts, labels, epochs=5, batch_size=16):
 
         tokenizer = AutoTokenizer.from_pretrained(self.tokenizer_name)
         texts = np.array(texts)
@@ -45,7 +45,7 @@ class FastFineTuna:
             model.train()
 
 
-            train_loader = DataLoader(train_dataset, batch_size=16, shuffle=True)
+            train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
             optim = AdamW(model.parameters(), lr=5e-5)
 

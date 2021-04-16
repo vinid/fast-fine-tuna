@@ -1,4 +1,4 @@
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
+from transformers import AutoModelForSequenceClassification, AutoTokenizer, AutoConfig
 from sklearn.model_selection import StratifiedKFold
 import numpy as np
 import torch
@@ -16,7 +16,8 @@ class FastFineTuna:
 
 
     def cross_validate_fit(self, texts, labels, epochs=5, batch_size=16):
-
+        config = AutoConfig.from_pretrained(self.model_name, num_labels=len(set(labels)),
+                                            finetuning_task="custom")
         tokenizer = AutoTokenizer.from_pretrained(self.tokenizer_name)
         texts = np.array(texts)
         labels = np.array(labels)
@@ -27,7 +28,7 @@ class FastFineTuna:
         predicted = []
 
         for train_index, test_index in skf.split(texts, labels):
-            model = AutoModelForSequenceClassification.from_pretrained(self.model_name)
+            model = AutoModelForSequenceClassification.from_pretrained(self.model_name, config=config)
 
 
             X_train, X_test = texts[train_index].tolist(), texts[test_index].tolist()

@@ -79,7 +79,6 @@ class FastFineTuna:
     def train_and_save(self, texts, labels, path, epochs=5, batch_size=16, learning_rate=5e-5):
         model = AutoModelForSequenceClassification.from_pretrained(self.model_name)
         tokenizer = AutoTokenizer.from_pretrained(self.tokenizer_name)
-        labels = np.array(labels)
 
         tokenized_train = tokenizer(texts, truncation=True, padding=True)
 
@@ -92,7 +91,9 @@ class FastFineTuna:
 
         optim = AdamW(model.parameters(), lr=learning_rate)
 
+        pbar = tqdm(total=epochs, position=0, leave=True)
         for epoch in range(epochs):
+            pbar.update(1)
             for batch in train_loader:
                 optim.zero_grad()
                 input_ids = batch['input_ids'].to(self.device)
@@ -102,6 +103,7 @@ class FastFineTuna:
                 loss = outputs[0]
                 loss.backward()
                 optim.step()
+        pbar.close()
 
         os.makedirs(path)
         model.save_pretrained(path)

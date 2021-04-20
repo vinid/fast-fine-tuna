@@ -77,7 +77,11 @@ class FastFineTuna:
         return original, predicted
 
     def train_and_save(self, texts, labels, path, epochs=5, batch_size=16, learning_rate=5e-5):
-        model = AutoModelForSequenceClassification.from_pretrained(self.model_name)
+
+        config = AutoConfig.from_pretrained(self.model_name, num_labels=len(set(labels)),
+                                            finetuning_task="custom")
+
+        model = AutoModelForSequenceClassification.from_pretrained(self.model_name, config=config)
         tokenizer = AutoTokenizer.from_pretrained(self.tokenizer_name)
 
         tokenized_train = tokenizer(texts, truncation=True, padding=True)

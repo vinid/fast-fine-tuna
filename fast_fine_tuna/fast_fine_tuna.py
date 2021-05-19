@@ -123,7 +123,8 @@ class DoubleFastFineTuna:
         self.tokenizer_name = tokenizer_name
         self.device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
-    def cross_validate_fit(self, texts, labels_A, labels_B, splits=5, epochs=5, batch_size=16, learning_rate=5e-5):
+    def cross_validate_fit(self, texts, labels_A, labels_B, splits=5, epochs=5, batch_size=16, learning_rate=5e-5,
+                           ):
 
         tokenizer = AutoTokenizer.from_pretrained(self.tokenizer_name)
         texts = np.array(texts)
@@ -138,7 +139,7 @@ class DoubleFastFineTuna:
         predicted_B = []
 
         for train_index, test_index in skf.split(texts, labels_A, labels_B):
-            model = MiniModel(self.model_name)
+            model = MiniModel(self.model_name, len(set(labels_A)), len(set(labels_B)))
 
             X_train, X_test = texts[train_index].tolist(), texts[test_index].tolist()
             y_A_train, y_A_test = labels_A[train_index].tolist(), labels_A[test_index].tolist()

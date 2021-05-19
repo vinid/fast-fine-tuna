@@ -2,12 +2,12 @@ from transformers import AutoModel
 from torch import nn
 
 class MiniModel(nn.Module):
-    def __init__(self, model_name):
+    def __init__(self, model_name, n_labels):
         super().__init__()
         self.model = AutoModel.from_pretrained(model_name)
 
-        self.first_classifier = nn.Linear(768, 2)
-        self.second_classifier = nn.Linear(768, 2)
+        self.first_classifier = nn.Linear(768, n_labels)
+        self.second_classifier = nn.Linear(768, n_labels)
 
     def forward(self, input_ids, attention_mask):
         output = self.model(input_ids, attention_mask=attention_mask)
